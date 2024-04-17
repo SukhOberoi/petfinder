@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 import mysql.connector
+from datetime import datetime
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -20,7 +21,12 @@ def get_dogs():
     try:
         connection = connect_to_database()
         cursor = connection.cursor(dictionary=True)
-        query = "SELECT * FROM dogs_available, dog_details where dogs_available.dog_id=dog_details.dog_id"
+        query = """
+            SELECT d.*, s.shelter_name 
+            FROM dogs_available AS da
+            JOIN dog_details AS d ON da.dog_id = d.dog_id
+            JOIN shelter AS s ON da.shelter_id = s.shelter_id
+        """
         cursor.execute(query)
         dogs = cursor.fetchall()
         cursor.close()
@@ -28,6 +34,7 @@ def get_dogs():
         return jsonify(dogs)
     except Exception as e:
         return jsonify({"error": str(e)})
+
 
 @app.route('/breeds', methods=['GET'])
 def get_all_breeds():
@@ -58,19 +65,59 @@ def get_all_breeds():
 
 
 # Route to fetch a specific dog by ID
-# @app.route('/dogs/<int:dog_id>', methods=['GET'])
-# def get_dog(dog_id):
-#     try:
-#         connection = connect_to_database()
-#         cursor = connection.cursor(dictionary=True)
-#         query = "SELECT * FROM dog WHERE dog_id = %s"
-#         cursor.execute(query, (dog_id,))
-#         dog = cursor.fetchone()
-#         cursor.close()
-#         connection.close()
-#         return jsonify(dog)
-#     except Exception as e:
-#         return jsonify({"error": str(e)})
+
+
+@app.route('/dogs/<int:dog_id>', methods=['GET'])
+def get_dog(dog_id):
+    try:
+        connection = connect_to_database()
+        cursor = connection.cursor(dictionary=True)
+        
+        # Query to fetch details about the dog
+        dog_query = "SELECT * FROM dog WHERE dog_id = %s"
+        cursor.execute(dog_query, (dog_id,))
+        dog = cursor.fetchone()
+
+        if not dog:
+            return jsonify({"error": "Dog not found"}), 404
+
+        # Query to fetch details about the shelter
+        shelter_query = "SELECT * FROM shelter WHERE shelter_id = (SELECT shelter_id FROM dogs_available WHERE dog_id = %s)"
+        cursor.execute(shelter_query, (dog_id,))
+        shelter = cursor.fetchone()
+
+        # Convert opening and closing times to strings
+        opening_time = str(shelter['opening_time'])
+        closing_time = str(shelter['closing_time'])
+
+        # Query to fetch details about the breed
+        breed_query = "SELECT * FROM breed WHERE breed_id = %s"
+        cursor.execute(breed_query, (dog['breed_id'],))
+        breed = cursor.fetchone()
+        cursor.close()
+        connection.close()
+        print(shelter)
+        # Combine dog, shelter, and breed details into a single dictionary
+        dog_details = {
+            "dog": dog,
+            "shelter": {
+                "shelter_id": shelter['shelter_id'],
+                "shelter_name": shelter['shelter_name'],
+                "address": shelter['location'],
+                "capacity": shelter['capacity'],
+                "phone1" : shelter['phone_no1'],
+                "phone2" : shelter['phone_no2'],
+                "opening_time": opening_time,
+                "closing_time": closing_time
+            },
+            "breed": breed
+        }
+
+        return jsonify(dog_details)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 # Route to add a new dog
 @app.route('/add_dog', methods=['POST'])
@@ -104,8 +151,8 @@ def add_dog():
 
 
 # Route to update an existing dog
-@app.route('/dogs/<int:dog_id>', methods=['PUT'])
-def update_dog(dog_id):
+# @app.route('/dogs/<int:dog_id>', methods=['PUT'])
+# def update_dog(dog_id):
     try:
         data = request.json
         connection = connect_to_database()
@@ -314,6 +361,116 @@ def get_breed_details():
         # Log any errors
         print("Error:", e)
         return jsonify({'message': 'Failed to get breed details'}), 500
+
+
+@app.route('/remove_dog', methods=['DELETE'])
+def remove_dog():
+    try:
+        # Get the dog_id from the request parameters
+        dog_id = request.args.get('dog_id')
+
+        # Validate that dog_id is provided
+        if not dog_id:
+            return jsonify({'error': 'Dog ID is required'}), 400
+
+        # Connect to the database
+        connection = connect_to_database()
+
+        # Execute the DELETE query to remove the dog from dogs_available table
+        with connection.cursor() as cursor:
+            delete_query = "DELETE FROM dogs_available WHERE dog_id = %s"
+            cursor.execute(delete_query, (dog_id,))
+            connection.commit()
+
+        # Close the database connection
+        connection.close()
+
+        return jsonify({'message': f'Dog with ID {dog_id} removed successfully'}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+from flask import jsonify
+
+@app.route('/shelters/<shelter_id>', methods=['GET'])
+def get_shelter_details(shelter_id):
+    try:
+        connection = connect_to_database()
+        cursor = connection.cursor(dictionary=True)
+        query = "SELECT * FROM shelter WHERE shelter_id = %s"
+        cursor.execute(query, (shelter_id,))
+        shelter = cursor.fetchone()
+        
+        if shelter:
+            # Convert opening and closing time to string before jsonify
+            shelter['opening_time'] = str(shelter['opening_time'])
+            shelter['closing_time'] = str(shelter['closing_time'])
+            print(shelter)
+            return jsonify(shelter)
+        else:
+            return jsonify({"error": "Shelter not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
+@app.route('/appointments', methods=['POST'])
+def create_visit_appointment():
+    try:
+        data = request.json
+        appointment_date = data.get('appointment_date')
+        appointment_time = data.get('appointment_time')
+        user_id = data.get('user_id')
+        shelter_id = data.get('shelter_id')
+
+        if not all([appointment_date, appointment_time, user_id, shelter_id]):
+            return jsonify({"error": "Missing required fields"}), 400
+
+        connection = connect_to_database()
+        cursor = connection.cursor()
+
+        query = "INSERT INTO visits (appointment_date, appointment_time, user_id, shelter_id) VALUES (%s, %s, %s, %s)"
+        cursor.execute(query, (appointment_date, appointment_time, user_id, shelter_id))
+
+        connection.commit()
+        cursor.close()
+        connection.close()
+
+        return jsonify({"message": "Appointment created successfully"}), 201
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+    
+@app.route('/appointments/<string:shelter_id>', methods=['GET'])
+def get_shelter_appointments(shelter_id):
+    try:
+        connection = connect_to_database()
+        cursor = connection.cursor(dictionary=True)
+        
+        # Query to fetch all appointments of the specified shelter including adopter details
+        query = """
+        SELECT visits.*, adopter.*
+        FROM visits
+        INNER JOIN adopter ON visits.user_id = adopter.user_id
+        WHERE visits.shelter_id = %s
+        """
+        cursor.execute(query, (shelter_id,))
+        appointments = cursor.fetchall()
+
+        # Convert appointment time to string using str() before returning
+        for appointment in appointments:
+            appointment['appointment_time'] = str(appointment['appointment_time'])
+        
+        cursor.close()
+        connection.close()
+
+        return jsonify(appointments)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)

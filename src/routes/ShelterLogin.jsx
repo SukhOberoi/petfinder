@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import DogForm from "../../components/DogForm.jsx";
+import Appointments from "../../components/Appointments.jsx";
 
 export default function ShelterLogin() {
 	const [loginData, setLoginData] = useState({
@@ -209,7 +210,11 @@ export default function ShelterLogin() {
 					</div>
 				</div>
 			)}
-			{loggedIn && (<DogForm />)}
+			{loggedIn && (<><DogForm />
+			<Appointments />
+			</>
+		
+		)}
 		</>
 	);
 }
