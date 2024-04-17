@@ -29,36 +29,79 @@ def get_dogs():
     except Exception as e:
         return jsonify({"error": str(e)})
 
-# Route to fetch a specific dog by ID
-@app.route('/dogs/<int:dog_id>', methods=['GET'])
-def get_dog(dog_id):
+@app.route('/breeds', methods=['GET'])
+def get_all_breeds():
     try:
+        # Connect to the database
         connection = connect_to_database()
-        cursor = connection.cursor(dictionary=True)
-        query = "SELECT * FROM dog WHERE dog_id = %s"
-        cursor.execute(query, (dog_id,))
-        dog = cursor.fetchone()
-        cursor.close()
+
+        # Query to retrieve all breeds
+        with connection.cursor() as cursor:
+            sql = "SELECT * FROM breed"
+            cursor.execute(sql)
+            breeds = cursor.fetchall()
+
+        # Close the database connection
         connection.close()
-        return jsonify(dog)
+
+        if breeds:
+            # Convert the result to a list of dictionaries
+            # breed_list = [dict(breed) for breed in breeds]
+            return jsonify(breeds)
+        else:
+            return jsonify({'message': 'No breeds found'}), 402
+
     except Exception as e:
-        return jsonify({"error": str(e)})
+        # Log any errors
+        print("Error:", e)
+        return jsonify({'message': 'Failed to get breeds'}), 500
+
+
+# Route to fetch a specific dog by ID
+# @app.route('/dogs/<int:dog_id>', methods=['GET'])
+# def get_dog(dog_id):
+#     try:
+#         connection = connect_to_database()
+#         cursor = connection.cursor(dictionary=True)
+#         query = "SELECT * FROM dog WHERE dog_id = %s"
+#         cursor.execute(query, (dog_id,))
+#         dog = cursor.fetchone()
+#         cursor.close()
+#         connection.close()
+#         return jsonify(dog)
+#     except Exception as e:
+#         return jsonify({"error": str(e)})
 
 # Route to add a new dog
-@app.route('/dogs', methods=['POST'])
+@app.route('/add_dog', methods=['POST'])
 def add_dog():
     try:
         data = request.json
         connection = connect_to_database()
         cursor = connection.cursor()
-        query = "INSERT INTO dog (dog_name, age, vaccination_status, breed_id) VALUES (%s, %s, %s, %s)"
-        cursor.execute(query, (data['dog_name'], data['age'], data['vaccination_status'], data['breed_id']))
+
+        # Insert into dog table
+        dog_query = "INSERT INTO dog (dog_name, age, vaccination_status, breed_id, image) VALUES (%s, %s, %s, %s, %s)"
+        cursor.execute(dog_query, (data['dog_name'], data['age'], data['vaccination_status'], data['breed_id'], data['image']))
+
+        # Get the ID of the last inserted row
+        dog_id = cursor.lastrowid
+
+        # Insert into dogs_available table
+        available_query = "INSERT INTO dogs_available (dog_id, shelter_id) VALUES (%s, %s)"
+        cursor.execute(available_query, (dog_id, data['shelter_id']))
+
+        # Commit the transaction
         connection.commit()
+
+        # Close the cursor and connection
         cursor.close()
         connection.close()
+
         return jsonify({"message": "Dog added successfully"})
     except Exception as e:
         return jsonify({"error": str(e)})
+
 
 # Route to update an existing dog
 @app.route('/dogs/<int:dog_id>', methods=['PUT'])
@@ -164,10 +207,47 @@ def adopter_register():
     
 @app.route('/shelter_login', methods=['POST'])
 def shelter_login():
-    data = request.json
-    print("Shelter Login Data Received:", data)
-    # You can perform authentication logic here
-    return jsonify({'message': 'Login successful'})
+    try:
+        # Connect to the database
+        connection = connect_to_database()
+        
+        data = request.json
+        print("Shelter Login Data Received:", data)
+        
+        # Extract shelter ID and password from request data
+        shelter_id = data.get('shelterid')
+        password = data.get('password')
+        
+        # Query the database to check if the shelter exists and the password matches
+        with connection.cursor() as cursor:
+            sql = "SELECT * FROM shelter WHERE shelter_id = %s AND password = %s"
+            cursor.execute(sql, (shelter_id, password))
+            shelter_query = cursor.fetchone()
+        
+        if shelter_query:
+            # Shelter exists and password matches, return shelter details
+            shelter_details = {
+                'shelterid': shelter_query[0],
+                'sheltername': shelter_query[1],
+                'address': shelter_query[2],
+                'phone1': shelter_query[3],
+                'phone2': shelter_query[4],
+                'capacity': shelter_query[5],
+                'opening': str(shelter_query[6]),  # Convert time to string
+                'closing': str(shelter_query[7]),  # Convert time to string
+            }
+            return jsonify({'message': 'Login successful', 'shelter_details': shelter_details})
+        else:
+            # Shelter does not exist or password does not match, return 401 unauthorized
+            abort(401)
+    except Exception as e:
+        # Log any errors
+        print("Error:", e)
+        return jsonify({'message': 'Failed to login'}), 500
+    finally:
+        # Close the database connection
+        connection.close()
+
 
 @app.route('/shelter_register', methods=['POST'])
 def shelter_register():
