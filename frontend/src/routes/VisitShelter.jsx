@@ -12,7 +12,7 @@ export default function VisitShelter() {
     useEffect(() => {
         const fetchShelterDetails = async () => {
             try {
-                const response = await fetch(`http://127.0.0.1:5000/shelters/${shelterId}`, {
+                const response = await fetch(`${import.meta.env.VITE_URL}/shelters/${shelterId}`, {
                     method: "GET",
                 });
 
@@ -62,7 +62,7 @@ export default function VisitShelter() {
         }
 
         try {
-            const response = await fetch("http://127.0.0.1:5000/appointments", {
+            const response = await fetch(`${import.meta.env.VITE_URL}/appointments`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

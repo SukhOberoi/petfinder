@@ -16,7 +16,7 @@ export default function AdopterLogin() {
 	});
 
 	const handleLogin = () => {
-		fetch("http://127.0.0.1:5000/adopter_login", {
+		fetch(`${import.meta.env.VITE_URL}/adopter_login`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -54,7 +54,7 @@ export default function AdopterLogin() {
 	};
 
 	const handleRegister = () => {
-		fetch("http://127.0.0.1:5000/adopter_register", {
+		fetch(`${import.meta.env.VITE_URL}/adopter_register`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

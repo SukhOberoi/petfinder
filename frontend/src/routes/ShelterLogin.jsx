@@ -23,7 +23,7 @@ export default function ShelterLogin() {
 	const [loggedIn, setLoggedIn] = useState(false);
 
 	const handleLogin = () => {
-		fetch("http://127.0.0.1:5000/shelter_login", {
+		fetch(`${import.meta.env.VITE_URL}/shelter_login`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -53,7 +53,7 @@ export default function ShelterLogin() {
 	};
 
 	const handleRegister = () => {
-		fetch("http://127.0.0.1:5000/shelter_register", {
+		fetch(`${import.meta.env.VITE_URL}/shelter_register`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

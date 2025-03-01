@@ -6,7 +6,7 @@ export default function DogCard(props) {
   const [breedDetails, setBreedDetails] = useState(null);
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:5000/breed_details?breed_name=${encodeURIComponent(props.dog.breed_name)}`, {
+    fetch(`${import.meta.env.VITE_URL}/breed_details?breed_name=${encodeURIComponent(props.dog.breed_name)}`, {
       method: "GET",
     })
       .then((response) => {
