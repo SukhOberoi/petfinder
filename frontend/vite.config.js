@@ -8,5 +8,18 @@ export default defineConfig({
   css: {
     postcss: {
       plugins: [tailwindcss()],
-    }}
+    }
+  },
+  base: "/",
+  preview: {
+    port: 3000,
+    strictPort: true,
+  },
+  server: {
+    port: 3000,
+    strictPort: true,
+    host: true,
+    origin: "http://0.0.0.0:3000",
+  },
+
 })

@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 import mysql.connector
 from datetime import datetime
 from flask_cors import CORS
@@ -9,9 +9,9 @@ CORS(app)
 # Connect to your MySQL database
 def connect_to_database():
     return mysql.connector.connect(
-        host="localhost",
+        host="db",
         user="root",
-        password="",
+        password="root",
         database="pets"
     )
 
@@ -153,18 +153,18 @@ def add_dog():
 # Route to update an existing dog
 # @app.route('/dogs/<int:dog_id>', methods=['PUT'])
 # def update_dog(dog_id):
-    try:
-        data = request.json
-        connection = connect_to_database()
-        cursor = connection.cursor()
-        query = "UPDATE dog SET dog_name = %s, age = %s, vaccination_status = %s, breed_id = %s WHERE dog_id = %s"
-        cursor.execute(query, (data['dog_name'], data['age'], data['vaccination_status'], data['breed_id'], dog_id))
-        connection.commit()
-        cursor.close()
-        connection.close()
-        return jsonify({"message": "Dog updated successfully"})
-    except Exception as e:
-        return jsonify({"error": str(e)})
+#     try:
+#         data = request.json
+#         connection = connect_to_database()
+#         cursor = connection.cursor()
+#         query = "UPDATE dog SET dog_name = %s, age = %s, vaccination_status = %s, breed_id = %s WHERE dog_id = %s"
+#         cursor.execute(query, (data['dog_name'], data['age'], data['vaccination_status'], data['breed_id'], dog_id))
+#         connection.commit()
+#         cursor.close()
+#         connection.close()
+#         return jsonify({"message": "Dog updated successfully"})
+#     except Exception as e:
+#         return jsonify({"error": str(e)})
 
 # Route to delete a dog
 @app.route('/dogs/<int:dog_id>', methods=['DELETE'])
@@ -473,4 +473,4 @@ def get_shelter_appointments(shelter_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host ='0.0.0.0')

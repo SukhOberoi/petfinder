@@ -1,2 +1,0 @@
-adopter login
-shelter login

@@ -34,7 +34,7 @@ export default function DogCard(props) {
   };
 
   return (
-    <div className='relative grid grid-cols-1 p-2 text-center border-2 border-black rounded-sm bg-slate-200'>
+    <div className='relative grid grid-cols-1 p-2 text-center border-2 border-black rounded-lg bg-slate-200'>
       <img className="m-auto" width="250px" src={props.dog.image} alt="" />
       <h2 className='text-2xl'>{props.dog.dog_name}</h2>
       <h3 className='text-xl'>{props.dog.breed_name}</h3>
