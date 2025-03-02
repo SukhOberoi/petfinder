@@ -28,7 +28,7 @@ export default function Home() {
 			});
 	}, []);
 	return (
-		<div className="grid grid-cols-4 gap-8 m-4">
+		<div className="grid grid-cols-1 gap-8 m-4 lg:grid-cols-4">
 			{dogs.map((dog) => (
 				<DogCard dog={dog} />
 			))}

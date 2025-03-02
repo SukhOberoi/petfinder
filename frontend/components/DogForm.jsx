@@ -17,7 +17,7 @@ export default function DogForm() {
   }, []);
 
   const fetchBreeds = () => {
-    fetch(`${import.meta.env.VITE_URL}:5000/breeds`)
+    fetch(`${import.meta.env.VITE_URL}/breeds`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');

@@ -88,7 +88,7 @@ export default function AdopterLogin() {
 	};
 
 	return (
-		<div className="grid grid-cols-2">
+		<div className="grid grid-cols-1 md:grid-cols-2">
 			<div className="p-4 m-2 rounded-md bg-slate-200">
 				<h3 className="text-2xl">Login</h3>
 				<input
