@@ -28,10 +28,13 @@ export default function Home() {
 			});
 	}, []);
 	return (
-		<div className="grid grid-cols-1 gap-8 m-4 lg:grid-cols-4">
-			{dogs.map((dog) => (
-				<DogCard dog={dog} />
-			))}
-		</div>
+		<>
+			{!dogs.length && "Loading..."}
+			<div className="grid grid-cols-1 gap-8 m-4 lg:grid-cols-4">
+				{dogs.map((dog) => (
+					<DogCard dog={dog} />
+				))}
+			</div>
+		</>
 	);
 }
