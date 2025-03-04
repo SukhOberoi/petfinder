@@ -125,27 +125,34 @@ def add_dog():
     try:
         data = request.json
         connection = connect_to_database()
+        
+        # Create a cursor to select existing dog_ids
         cursor = connection.cursor()
-
-        # Insert into dog table
-        dog_query = "INSERT INTO dog (dog_name, age, vaccination_status, breed_id, image) VALUES (%s, %s, %s, %s, %s)"
-        cursor.execute(dog_query, (data['dog_name'], data['age'], data['vaccination_status'], data['breed_id'], data['image']))
-
-        # Get the ID of the last inserted row
-        dog_id = cursor.lastrowid
-
+        cursor.execute("SELECT dog_id FROM dog")
+        rows = cursor.fetchall()
+        used_ids = {row[0] for row in rows}
+        
+        # Get the smallest available dog_id starting from 1
+        new_dog_id = 1
+        while new_dog_id in used_ids:
+            new_dog_id += 1
+        
+        # Insert into dog table with the available dog id
+        dog_query = "INSERT INTO dog (dog_id, dog_name, age, vaccination_status, breed_id, image) VALUES (%s, %s, %s, %s, %s, %s)"
+        cursor.execute(dog_query, (new_dog_id, data['dog_name'], data['age'], data['vaccination_status'], data['breed_id'], data['image']))
+        
         # Insert into dogs_available table
         available_query = "INSERT INTO dogs_available (dog_id, shelter_id) VALUES (%s, %s)"
-        cursor.execute(available_query, (dog_id, data['shelter_id']))
-
+        cursor.execute(available_query, (new_dog_id, data['shelter_id']))
+        
         # Commit the transaction
         connection.commit()
-
+        
         # Close the cursor and connection
         cursor.close()
         connection.close()
-
-        return jsonify({"message": "Dog added successfully"})
+        
+        return jsonify({"message": "Dog added successfully", "dog_id": new_dog_id})
     except Exception as e:
         return jsonify({"error": str(e)})
 

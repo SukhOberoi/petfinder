@@ -11,6 +11,7 @@ export default function DogForm() {
   });
 
   const [breeds, setBreeds] = useState([]);
+  const [response, setResponse] = useState("");
 
   useEffect(() => {
     fetchBreeds();
@@ -75,9 +76,11 @@ export default function DogForm() {
     .then(data => {
       // Handle successful dog addition
       console.log(data);
+      setResponse(data.message);
     })
     .catch(error => {
       console.error('Error adding dog:', error);
+      setResponse('Error adding dog');
     });
   };
   
@@ -113,6 +116,7 @@ export default function DogForm() {
           <input type="file" id="image" name="image" accept="image/*" onChange={handleImageChange} className='border-2 border-black' />
         </div>
         <button type="submit" className='p-1 m-1 border-2 border-slate-300'>Add Dog</button>
+        <p>{response}</p>
       </form>
     </div>
   );
