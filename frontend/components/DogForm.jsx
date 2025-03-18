@@ -18,7 +18,7 @@ export default function DogForm() {
   }, []);
 
   const fetchBreeds = () => {
-    fetch(`${import.meta.env.VITE_URL}/breeds`)
+    fetch(`${window.location.origin}:5000/breeds`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -60,7 +60,7 @@ export default function DogForm() {
       shelter_id: shelterId // Add shelter_id to dogData
     };
   
-    fetch(`${import.meta.env.VITE_URL}/add_dog`, {
+    fetch(`${window.location.origin}:5000/add_dog`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

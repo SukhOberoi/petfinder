@@ -7,7 +7,7 @@ export default function AdoptMe() {
     const [confirmation, setConfirmation] = useState(false);
 
     useEffect(() => {
-        fetch(`${import.meta.env.VITE_URL}/dogs/${id}`, {
+        fetch(`${window.location.origin}:5000/dogs/${id}`, {
             method: "GET",
         })
             .then((response) => {
@@ -33,7 +33,7 @@ export default function AdoptMe() {
 
     const handleConfirm = () => {
         // Call the remove_dog endpoint
-        fetch(`${import.meta.env.VITE_URL}/remove_dog?dog_id=${id}`, {
+        fetch(`${window.location.origin}:5000/remove_dog?dog_id=${id}`, {
             method: "DELETE",
         })
             .then((response) => {

@@ -5,7 +5,7 @@ import DogCard from "../../components/DogCard";
 export default function Home() {
 	const [dogs, setDogs] = useState([]);
 	useEffect(() => {
-		fetch(`${import.meta.env.VITE_URL}/dogs`, {
+		fetch(`${window.location.origin}:5000/dogs`, {
 			method: "GET",
 		})
 			.then((response) => {

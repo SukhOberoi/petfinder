@@ -12,7 +12,7 @@ export default function VisitShelter() {
 		const fetchShelterDetails = async () => {
 			try {
 				const response = await fetch(
-					`${import.meta.env.VITE_URL}/shelters/${shelterId}`,
+					`${window.location.origin}:5000/shelters/${shelterId}`,
 					{
 						method: "GET",
 					}
@@ -64,7 +64,7 @@ export default function VisitShelter() {
 
 		try {
 			const response = await fetch(
-				`${import.meta.env.VITE_URL}/appointments`,
+				`${window.location.origin}:5000/appointments`,
 				{
 					method: "POST",
 					headers: {

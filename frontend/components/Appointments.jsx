@@ -14,7 +14,7 @@ export default function Appointments() {
           throw new Error('Shelter ID not found in local storage');
         }
 
-        const response = await fetch(`${import.meta.env.VITE_URL}/appointments/${shelterId}`);
+        const response = await fetch(`${window.location.origin}:5000/appointments/${shelterId}`);
         
         if (!response.ok) {
           throw new Error('Network response was not ok');
