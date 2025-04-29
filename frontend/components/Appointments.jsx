@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import { getApiBaseUrl } from '../utils/apiBaseUrl';
 export default function Appointments() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,7 +14,7 @@ export default function Appointments() {
           throw new Error('Shelter ID not found in local storage');
         }
 
-        const response = await fetch(`${window.location.origin}:5000/appointments/${shelterId}`);
+        const response = await fetch(`${getApiBaseUrl()}/appointments/${shelterId}`);
         
         if (!response.ok) {
           throw new Error('Network response was not ok');

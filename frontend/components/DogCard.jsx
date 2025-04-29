@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import { getApiBaseUrl } from '../utils/apiBaseUrl';
 export default function DogCard(props) {
   const [deets, setDeets] = useState(false);
   const [breedDetails, setBreedDetails] = useState(null);
 
   useEffect(() => {
-    fetch(`${window.location.origin}:5000/breed_details?breed_name=${encodeURIComponent(props.dog.breed_name)}`, {
+    fetch(`${getApiBaseUrl()}/breed_details?breed_name=${encodeURIComponent(props.dog.breed_name)}`, {
       method: "GET",
     })
       .then((response) => {

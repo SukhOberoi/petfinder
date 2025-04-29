@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import { getApiBaseUrl } from '../utils/apiBaseUrl';
 export default function DogForm() {
   const [dogData, setDogData] = useState({
     dog_name: '',
@@ -18,7 +18,7 @@ export default function DogForm() {
   }, []);
 
   const fetchBreeds = () => {
-    fetch(`${window.location.origin}:5000/breeds`)
+    fetch(`${getApiBaseUrl()}/breeds`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -60,7 +60,7 @@ export default function DogForm() {
       shelter_id: shelterId // Add shelter_id to dogData
     };
   
-    fetch(`${window.location.origin}:5000/add_dog`, {
+    fetch(`${getApiBaseUrl()}/add_dog`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

@@ -1,11 +1,11 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import DogCard from "../../components/DogCard";
-
+import { getApiBaseUrl } from '../utils/apiBaseUrl';
 export default function Home() {
 	const [dogs, setDogs] = useState([]);
 	useEffect(() => {
-		fetch(`${window.location.origin}:5000/dogs`, {
+		fetch(`${getApiBaseUrl()}/dogs`, {
 			method: "GET",
 		})
 			.then((response) => {

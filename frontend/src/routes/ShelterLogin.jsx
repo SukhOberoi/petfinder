@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import DogForm from "../../components/DogForm.jsx";
 import Appointments from "../../components/Appointments.jsx";
-
+import { getApiBaseUrl } from '../utils/apiBaseUrl';
 export default function ShelterLogin() {
 	const [loginData, setLoginData] = useState({
 		shelterid: "",
@@ -23,7 +23,7 @@ export default function ShelterLogin() {
 	const [loggedIn, setLoggedIn] = useState(false);
 
 	const handleLogin = () => {
-		fetch(`${window.location.origin}:5000/shelter_login`, {
+		fetch(`${getApiBaseUrl()}/shelter_login`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -53,7 +53,7 @@ export default function ShelterLogin() {
 	};
 
 	const handleRegister = () => {
-		fetch(`${window.location.origin}:5000/shelter_register`, {
+		fetch(`${getApiBaseUrl()}/shelter_register`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

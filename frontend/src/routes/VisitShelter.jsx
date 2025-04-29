@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-
+import { getApiBaseUrl } from '../utils/apiBaseUrl';
 export default function VisitShelter() {
 	const { shelterId } = useParams();
 	const [appointmentDate, setAppointmentDate] = useState("");
@@ -12,7 +12,7 @@ export default function VisitShelter() {
 		const fetchShelterDetails = async () => {
 			try {
 				const response = await fetch(
-					`${window.location.origin}:5000/shelters/${shelterId}`,
+					`${getApiBaseUrl()}/shelters/${shelterId}`,
 					{
 						method: "GET",
 					}
@@ -64,7 +64,7 @@ export default function VisitShelter() {
 
 		try {
 			const response = await fetch(
-				`${window.location.origin}:5000/appointments`,
+				`${getApiBaseUrl()}/appointments`,
 				{
 					method: "POST",
 					headers: {

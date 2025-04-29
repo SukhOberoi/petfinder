@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-
+import { getApiBaseUrl } from '../utils/apiBaseUrl';
 export default function AdoptMe() {
     const { id } = useParams();
     const [dogDetails, setDogDetails] = useState(null);
     const [confirmation, setConfirmation] = useState(false);
 
     useEffect(() => {
-        fetch(`${window.location.origin}:5000/dogs/${id}`, {
+        fetch(`${getApiBaseUrl()}/dogs/${id}`, {
             method: "GET",
         })
             .then((response) => {
@@ -33,7 +33,7 @@ export default function AdoptMe() {
 
     const handleConfirm = () => {
         // Call the remove_dog endpoint
-        fetch(`${window.location.origin}:5000/remove_dog?dog_id=${id}`, {
+        fetch(`${getApiBaseUrl()}/remove_dog?dog_id=${id}`, {
             method: "DELETE",
         })
             .then((response) => {

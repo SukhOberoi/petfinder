@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { getApiBaseUrl } from '../utils/apiBaseUrl';
 export default function AdopterLogin() {
 	const [loginData, setLoginData] = useState({
 		userid: "",
@@ -16,7 +16,7 @@ export default function AdopterLogin() {
 	});
 
 	const handleLogin = () => {
-		fetch(`${window.location.origin}:5000/adopter_login`, {
+		fetch(`${getApiBaseUrl()}/adopter_login`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -54,7 +54,7 @@ export default function AdopterLogin() {
 	};
 
 	const handleRegister = () => {
-		fetch(`${window.location.origin}:5000/adopter_register`, {
+		fetch(`${getApiBaseUrl()}/adopter_register`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
