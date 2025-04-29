@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getApiBaseUrl } from '../utils/apiBaseUrl';
+import { getApiBaseUrl } from '@/utils/apiBaseUrl';
 export default function AdoptMe() {
     const { id } = useParams();
     const [dogDetails, setDogDetails] = useState(null);

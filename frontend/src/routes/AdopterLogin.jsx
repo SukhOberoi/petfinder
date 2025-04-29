@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getApiBaseUrl } from '../utils/apiBaseUrl';
+import { getApiBaseUrl } from '@/utils/apiBaseUrl';
 export default function AdopterLogin() {
 	const [loginData, setLoginData] = useState({
 		userid: "",

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getApiBaseUrl } from '../utils/apiBaseUrl';
+import { getApiBaseUrl } from '@/utils/apiBaseUrl';
 export default function DogCard(props) {
   const [deets, setDeets] = useState(false);
   const [breedDetails, setBreedDetails] = useState(null);

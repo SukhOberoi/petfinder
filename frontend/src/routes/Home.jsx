@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import DogCard from "../../components/DogCard";
-import { getApiBaseUrl } from '../utils/apiBaseUrl';
+import { getApiBaseUrl } from '@/utils/apiBaseUrl';
 export default function Home() {
 	const [dogs, setDogs] = useState([]);
 	useEffect(() => {

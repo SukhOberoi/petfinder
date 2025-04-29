@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { getApiBaseUrl } from '../utils/apiBaseUrl';
+import { getApiBaseUrl } from '@/utils/apiBaseUrl';
 export default function VisitShelter() {
 	const { shelterId } = useParams();
 	const [appointmentDate, setAppointmentDate] = useState("");

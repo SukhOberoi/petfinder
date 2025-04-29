@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import DogForm from "../../components/DogForm.jsx";
 import Appointments from "../../components/Appointments.jsx";
-import { getApiBaseUrl } from '../utils/apiBaseUrl';
+import { getApiBaseUrl } from '@/utils/apiBaseUrl';
 export default function ShelterLogin() {
 	const [loginData, setLoginData] = useState({
 		shelterid: "",

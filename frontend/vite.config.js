@@ -21,5 +21,9 @@ export default defineConfig({
     host: true,
     origin: "http://0.0.0.0:3000",
   },
-
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, './src'), // Add alias for src directory
+    },
+  },
 })
